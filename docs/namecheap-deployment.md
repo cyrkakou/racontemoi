@@ -147,4 +147,4 @@ Optional variable:
 
 The SSH key must be dedicated to deployment and authorized for the cPanel account. During Phase 0 only, the workflow falls back to `ssh-keyscan` when `SSH_KNOWN_HOSTS` is absent and emits a warning. Before production, store the independently verified host-key line for the exact SSH hostname in `SSH_KNOWN_HOSTS`; the workflow will then use strict host-key checking without dynamic discovery.
 
-The workflow builds on Ubuntu with Node.js 22, uploads only `app.js` and `.next/standalone`, preserves `tmp/`, `logs/`, and `.env*`, then touches `tmp/restart.txt` to ask Passenger to restart. Runtime secrets such as MySQL credentials, `HEALTHCHECK_TOKEN`, and `PERSISTENT_STORAGE_DIR` remain managed by cPanel.
+The workflow builds on Ubuntu with Node.js 22, uploads only `app.js` and `.next/standalone`, preserves `tmp/`, `logs/`, and `.env*`, then touches `tmp/restart.txt` to ask Passenger to restart. The public health check tolerates the temporary LiteSpeed 404 observed while Namecheap recycles the shared-hosting process. Runtime secrets such as MySQL credentials, `HEALTHCHECK_TOKEN`, and `PERSISTENT_STORAGE_DIR` remain managed by cPanel.

@@ -229,12 +229,14 @@ jobs:
           fi
 
           health_url="${PUBLIC_URL}/api/health"
+          echo "Waiting for Passenger to recycle the application process..."
+          sleep 15
           curl \
             --fail-with-body \
             --show-error \
             --silent \
             --location \
-            --retry 8 \
+            --retry 36 \
             --retry-all-errors \
             --retry-delay 5 \
             --connect-timeout 10 \
