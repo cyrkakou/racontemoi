@@ -204,12 +204,15 @@ jobs:
           test -d "${staging_path}/.next/standalone/.next/static"
 
           mkdir -p "${deploy_path}/tmp"
+          mkdir -p "${deploy_path}/.next/standalone"
+
+          # Limit deletion to the generated runtime tree. Files created by cPanel
+          # in the application root (especially .htaccess/Passenger metadata)
+          # must survive every deployment.
           rsync -a --delete \
-            --exclude 'tmp/' \
-            --exclude 'logs/' \
-            --exclude '.env' \
-            --exclude '.env.*' \
-            "${staging_path}/" "${deploy_path}/"
+            "${staging_path}/.next/standalone/" \
+            "${deploy_path}/.next/standalone/"
+          install -m 644 "${staging_path}/app.js" "${deploy_path}/app.js"
 
           test -f "${deploy_path}/app.js"
           test -f "${deploy_path}/.next/standalone/server.js"
