@@ -103,6 +103,22 @@ jobs:
           tar -C "${artifact_root}" -czf "${archive_path}" .
           echo "DEPLOY_ARCHIVE=${archive_path}" >> "${GITHUB_ENV}"
 
+      - name: Resolve public application URL
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          public_url="${APP_URL%/}"
+          if [[ -z "${public_url}" ]]; then
+            candidate_domain="$(basename "${DEPLOY_PATH%/}")"
+            if [[ "${candidate_domain}" == *.* ]]; then
+              public_url="https://${candidate_domain}"
+              echo "::notice::APP_URL is not set; using ${public_url} from DEPLOY_PATH."
+            fi
+          fi
+
+          echo "PUBLIC_URL=${public_url}" >> "${GITHUB_ENV}"
+
       - name: Configure SSH
         shell: bash
         env:
@@ -203,11 +219,16 @@ jobs:
           REMOTE_SCRIPT
 
       - name: Verify public health endpoint
-        if: ${{ vars.APP_URL != '' }}
         shell: bash
         run: |
           set -Eeuo pipefail
-          health_url="${APP_URL%/}/api/health"
+
+          if [[ -z "${PUBLIC_URL:-}" ]]; then
+            echo "::warning::Public health check skipped because APP_URL is unset and DEPLOY_PATH does not end with a domain."
+            exit 0
+          fi
+
+          health_url="${PUBLIC_URL}/api/health"
           curl \
             --fail-with-body \
             --show-error \
@@ -229,9 +250,9 @@ jobs:
             echo
             echo "- Commit: \`${GITHUB_SHA}\`"
             echo "- Trigger: \`${GITHUB_EVENT_NAME}\`"
-            if [[ -n "${APP_URL:-}" ]]; then
-              echo "- Health check: \`${APP_URL%/}/api/health\`"
+            if [[ -n "${PUBLIC_URL:-}" ]]; then
+              echo "- Health check: \`${PUBLIC_URL}/api/health\`"
             else
-              echo "- Health check skipped: optional repository variable \`APP_URL\` is not set."
+              echo "- Health check skipped: no public URL could be resolved."
             fi
           } >> "${GITHUB_STEP_SUMMARY}"

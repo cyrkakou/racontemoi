@@ -143,7 +143,7 @@ Configure this required environment variable:
 
 Optional variable:
 
-- `APP_URL` — the public HTTPS origin, for example `https://poc.example.com`; when present, the workflow validates `/api/health` after deployment
+- `APP_URL` — the public HTTPS origin, for example `https://poc.example.com`. If omitted and `DEPLOY_PATH` ends with a domain directory such as `book.atikpa.com`, the workflow derives `https://book.atikpa.com` automatically.
 
 The SSH key must be dedicated to deployment and authorized for the cPanel account. During Phase 0 only, the workflow falls back to `ssh-keyscan` when `SSH_KNOWN_HOSTS` is absent and emits a warning. Before production, store the independently verified host-key line for the exact SSH hostname in `SSH_KNOWN_HOSTS`; the workflow will then use strict host-key checking without dynamic discovery.
 
