@@ -170,9 +170,9 @@ jobs:
           trap cleanup EXIT
 
           case "${deploy_path}" in
-            "${HOME}"/*/*) ;;
+            "${HOME}"/*) ;;
             *)
-              echo "DEPLOY_PATH must resolve at least two levels below the SSH home directory." >&2
+              echo "DEPLOY_PATH must resolve below the SSH home directory." >&2
               exit 1
               ;;
           esac
