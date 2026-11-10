@@ -1,0 +1,237 @@
+name: Deploy to Namecheap
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: namecheap-production
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+
+    env:
+      NODE_VERSION: "22"
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+      APP_URL: ${{ vars.APP_URL }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate source
+        run: |
+          npm run lint
+          npm run typecheck
+
+      - name: Build cPanel standalone output
+        run: npm run build:cpanel
+
+      - name: Validate deployment inputs
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          set -Eeuo pipefail
+
+          required_values=(
+            DEPLOY_PATH
+            SSH_HOST
+            SSH_PORT
+            SSH_USER
+            SSH_PRIVATE_KEY
+          )
+
+          for variable_name in "${required_values[@]}"; do
+            if [[ -z "${!variable_name:-}" ]]; then
+              echo "Missing required GitHub secret or variable: ${variable_name}" >&2
+              exit 1
+            fi
+          done
+
+          if [[ ! "${SSH_PORT}" =~ ^[0-9]+$ ]]; then
+            echo "SSH_PORT must contain only digits." >&2
+            exit 1
+          fi
+
+          if [[ "${DEPLOY_PATH}" != /* || "${DEPLOY_PATH}" == "/" ]]; then
+            echo "DEPLOY_PATH must be a non-root absolute path." >&2
+            exit 1
+          fi
+
+      - name: Prepare runtime artifact
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          artifact_root="${RUNNER_TEMP}/namecheap-runtime"
+          archive_path="${RUNNER_TEMP}/racontemoi-${GITHUB_SHA}.tar.gz"
+
+          mkdir -p "${artifact_root}/.next"
+          cp app.js "${artifact_root}/app.js"
+          cp -a .next/standalone "${artifact_root}/.next/standalone"
+
+          test -f "${artifact_root}/app.js"
+          test -f "${artifact_root}/.next/standalone/server.js"
+          test -f "${artifact_root}/.next/standalone/public/proof-mark.svg"
+          test -d "${artifact_root}/.next/standalone/.next/static"
+
+          tar -C "${artifact_root}" -czf "${archive_path}" .
+          echo "DEPLOY_ARCHIVE=${archive_path}" >> "${GITHUB_ENV}"
+
+      - name: Configure SSH
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          set -Eeuo pipefail
+
+          install -d -m 700 "${HOME}/.ssh"
+          printf '%s\n' "${SSH_PRIVATE_KEY}" > "${HOME}/.ssh/namecheap_deploy_key"
+
+          if [[ -n "${SSH_KNOWN_HOSTS:-}" ]]; then
+            printf '%s\n' "${SSH_KNOWN_HOSTS}" > "${HOME}/.ssh/known_hosts"
+          else
+            echo "::warning::SSH_KNOWN_HOSTS is not configured. Using ssh-keyscan temporarily for Phase 0 testing."
+            ssh-keyscan -H -p "${SSH_PORT}" "${SSH_HOST}" > "${HOME}/.ssh/known_hosts"
+          fi
+
+          chmod 600 "${HOME}/.ssh/namecheap_deploy_key" "${HOME}/.ssh/known_hosts"
+
+          cat > "${HOME}/.ssh/config" <<EOF
+          Host namecheap-deploy
+            HostName ${SSH_HOST}
+            User ${SSH_USER}
+            Port ${SSH_PORT}
+            IdentityFile ${HOME}/.ssh/namecheap_deploy_key
+            UserKnownHostsFile ${HOME}/.ssh/known_hosts
+            StrictHostKeyChecking yes
+            IdentitiesOnly yes
+            BatchMode yes
+            ConnectTimeout 15
+          EOF
+          chmod 600 "${HOME}/.ssh/config"
+
+          ssh namecheap-deploy 'printf "SSH connection established.\n"'
+
+      - name: Upload runtime artifact
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          scp "${DEPLOY_ARCHIVE}" \
+            "namecheap-deploy:./.racontemoi-${GITHUB_SHA}.tar.gz"
+
+      - name: Activate release and restart Passenger
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          ssh namecheap-deploy bash -s -- "${DEPLOY_PATH}" "${GITHUB_SHA}" <<'REMOTE_SCRIPT'
+          set -Eeuo pipefail
+
+          requested_path="$1"
+          release_sha="$2"
+          deploy_path="$(realpath -m "${requested_path}")"
+          archive_path="${HOME}/.racontemoi-${release_sha}.tar.gz"
+          staging_path="${HOME}/.racontemoi-staging-${release_sha}"
+
+          cleanup() {
+            rm -rf -- "${staging_path}"
+            rm -f -- "${archive_path}"
+          }
+          trap cleanup EXIT
+
+          case "${deploy_path}" in
+            "${HOME}"/*/*) ;;
+            *)
+              echo "DEPLOY_PATH must resolve at least two levels below the SSH home directory." >&2
+              exit 1
+              ;;
+          esac
+
+          command -v rsync >/dev/null
+          test -f "${archive_path}"
+
+          mkdir -p "${staging_path}"
+          tar -xzf "${archive_path}" -C "${staging_path}"
+
+          test -f "${staging_path}/app.js"
+          test -f "${staging_path}/.next/standalone/server.js"
+          test -d "${staging_path}/.next/standalone/.next/static"
+
+          mkdir -p "${deploy_path}/tmp"
+          rsync -a --delete \
+            --exclude 'tmp/' \
+            --exclude 'logs/' \
+            --exclude '.env' \
+            --exclude '.env.*' \
+            "${staging_path}/" "${deploy_path}/"
+
+          test -f "${deploy_path}/app.js"
+          test -f "${deploy_path}/.next/standalone/server.js"
+
+          touch "${deploy_path}/tmp/restart.txt"
+          printf 'Deployed commit %s and requested Passenger restart.\n' "${release_sha}"
+          REMOTE_SCRIPT
+
+      - name: Verify public health endpoint
+        if: ${{ vars.APP_URL != '' }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          health_url="${APP_URL%/}/api/health"
+          curl \
+            --fail-with-body \
+            --show-error \
+            --silent \
+            --location \
+            --retry 8 \
+            --retry-all-errors \
+            --retry-delay 5 \
+            --connect-timeout 10 \
+            --max-time 30 \
+            "${health_url}"
+
+      - name: Deployment summary
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          {
+            echo "## Namecheap deployment"
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Trigger: \`${GITHUB_EVENT_NAME}\`"
+            if [[ -n "${APP_URL:-}" ]]; then
+              echo "- Health check: \`${APP_URL%/}/api/health\`"
+            else
+              echo "- Health check skipped: optional repository variable \`APP_URL\` is not set."
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"

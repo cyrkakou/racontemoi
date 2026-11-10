@@ -1,0 +1,180 @@
+:root {
+  --background: #f6f7f4;
+  --surface: #ffffff;
+  --foreground: #17211b;
+  --muted: #58645d;
+  --border: #dce2dd;
+  --accent: #9a5b12;
+  --success: #1c6b45;
+  --danger: #a12828;
+  --pending: #6b6258;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.shell {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+}
+
+.diagnostic {
+  width: min(100%, 760px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 5px solid var(--accent);
+}
+
+.heading {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: start;
+  padding: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mark {
+  display: block;
+}
+
+.context,
+.summary,
+.footer-note {
+  color: var(--muted);
+}
+
+.context {
+  margin: 0 0 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  max-width: 24ch;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.summary {
+  margin: 14px 0 0;
+  max-width: 58ch;
+}
+
+.status-list {
+  margin: 0;
+}
+
+.status-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.75fr) minmax(0, 1.25fr);
+  gap: 24px;
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-row dt {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.status-row dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.status-value {
+  display: inline-flex;
+  gap: 9px;
+  align-items: baseline;
+  font-weight: 700;
+}
+
+.status-value::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-value[data-status="ok"] {
+  color: var(--success);
+}
+
+.status-value[data-status="error"] {
+  color: var(--danger);
+}
+
+.status-value[data-status="pending"] {
+  color: var(--pending);
+}
+
+.status-detail {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.footer-note {
+  margin: 0;
+  padding: 20px 32px;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 560px) {
+  .shell {
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .diagnostic {
+    min-height: 100svh;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .heading {
+    grid-template-columns: 1fr;
+    padding: 28px 20px;
+  }
+
+  .status-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 16px 20px;
+  }
+
+  .footer-note {
+    padding: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}

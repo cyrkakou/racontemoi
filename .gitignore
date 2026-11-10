@@ -1,0 +1,26 @@
+# Dependencies
+/node_modules
+
+# Next.js build output
+/.next
+/out
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Runtime data and logs
+/.data
+/logs
+*.log
+*.tsbuildinfo
+/.impeccable
+
+# Test and deployment artifacts
+/deployment
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
