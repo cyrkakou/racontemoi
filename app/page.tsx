@@ -77,7 +77,7 @@ export default async function Home() {
               />
 
               {/* left page — desktop overlay */}
-              <div className="absolute left-[7.5%] top-[9%] hidden h-[76%] w-[40%] flex-col items-center justify-start overflow-hidden text-center sm:flex">
+              <div className="absolute left-[8.5%] top-[8%] hidden h-[78%] w-[37.5%] flex-col items-center justify-start overflow-hidden text-center sm:flex">
                 <p className="eyebrow tracking-[0.22em] text-terra-deep" style={{ fontSize: "clamp(0.5rem,0.9vw,0.72rem)" }}>
                   ✦ Des livres uniques ✦
                 </p>
@@ -128,7 +128,7 @@ export default async function Home() {
               </div>
 
               {/* right page — desktop overlay */}
-              <div className="absolute right-[5.5%] top-[8%] hidden h-[78%] w-[40%] flex-col items-center justify-center sm:flex">
+              <div className="absolute right-[7.5%] top-[8%] hidden h-[78%] w-[37%] flex-col items-center justify-center sm:flex">
                 <div className="relative w-full flex-1 overflow-hidden rounded-[0.4rem]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
