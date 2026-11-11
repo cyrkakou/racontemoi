@@ -166,6 +166,32 @@ body {
   box-shadow: var(--shadow-page);
 }
 
+/* Button sheen sweep on hover */
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.25) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.sheen:hover::after {
+  transform: translateX(120%);
+}
+
+/* Press feedback */
+.press {
+  transition: transform 0.15s ease-out;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
 /* Slow image settle */
 .settle {
   animation: settle 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;

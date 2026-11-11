@@ -41,47 +41,51 @@ export function BookSpread({
 
   return (
     <div
-      className={cn(
-        "relative grid aspect-[8/5] w-full overflow-hidden rounded-2xl shadow-book",
-        className,
-      )}
+      className={cn("relative w-full overflow-hidden rounded-[1.4rem] p-[3.2%] pb-[4.5%]", className)}
       role="img"
       aria-label={`Livre ouvert : ${heading}`}
+      style={{ background: "linear-gradient(160deg, #d7e3cc, #c9d9bc 60%, #bfceb2)" }}
     >
-      {/* sage-green cover margin peeking around the pages */}
-      <div className="absolute inset-0 rounded-2xl bg-botanical/25" aria-hidden />
-      {/* left page */}
-      <div className="paper-grain relative m-[6%] mb-[7%] mr-0 rounded-l-xl border-r border-line/70 bg-paper-card pl-[9%] pr-[6%] pt-[8%] shadow-inner">
-        <p className="eyebrow text-center text-ink-faint">{chapterLabel}</p>
-        <h3 className="mt-2 text-center font-display text-[clamp(1rem,2.2vw,1.5rem)] font-semibold leading-snug tracking-tight text-ink">
-          {heading}
-        </h3>
-        <p className="mx-auto mt-2 h-px w-10 bg-ochre/70" aria-hidden />
-        <p className="story-text mt-[6%] text-[clamp(0.62rem,1.35vw,0.95rem)] leading-[1.75] text-ink-soft">
-          {text}
-        </p>
-      </div>
-      {/* right page */}
-      <div className="paper-grain relative m-[6%] mb-[7%] ml-0 rounded-r-xl bg-paper-card p-[5%] shadow-inner">
-        <div
-          className="h-full w-full overflow-hidden rounded-lg [&>svg]:h-full [&>svg]:w-full"
-          dangerouslySetInnerHTML={{ __html: svg }}
-        />
-        {caption ? (
-          <p className="story-text mt-[3%] text-center text-[clamp(0.55rem,1.1vw,0.8rem)] italic text-ink-soft">
-            {caption}
-          </p>
-        ) : null}
-      </div>
-      {/* spine shadow between pages */}
+      {/* book shadow under the open pages */}
       <div
-        className="pointer-events-none absolute inset-y-[6%] left-1/2 w-8 -translate-x-1/2"
         aria-hidden
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgb(43 33 24 / 0.10) 45%, rgb(43 33 24 / 0.16) 50%, rgb(43 33 24 / 0.10) 55%, transparent)",
-        }}
+        className="absolute inset-x-[6%] bottom-[2.4%] h-6 rounded-[50%] bg-ink/20 blur-md"
       />
+      <div className="relative grid grid-cols-2 overflow-hidden rounded-lg">
+        {/* left page */}
+        <div className="paper-grain relative flex flex-col bg-paper-card px-[8%] py-[8%]">
+          <p className="eyebrow text-center text-ink-faint">{chapterLabel}</p>
+          <h3 className="mt-2 text-center font-display text-[clamp(0.95rem,2vw,1.45rem)] font-semibold leading-snug tracking-tight text-ink">
+            {heading}
+          </h3>
+          <p className="mx-auto mt-2.5 h-px w-9 bg-ochre/70" aria-hidden />
+          <p className="story-text mt-[7%] flex-1 text-[clamp(0.62rem,1.25vw,0.92rem)] leading-[1.8] text-ink-soft">
+            {text}
+          </p>
+          <p className="mt-[6%] text-center font-display text-xs italic text-ink-faint" aria-hidden>6</p>
+        </div>
+        {/* spine shadow */}
+        <div
+          className="absolute inset-y-0 left-1/2 w-10 -translate-x-1/2"
+          aria-hidden
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, rgb(43 33 24 / 0.07) 40%, rgb(43 33 24 / 0.14) 50%, rgb(43 33 24 / 0.07) 60%, transparent)",
+          }}
+        />
+        {/* right page */}
+        <div className="paper-grain relative flex flex-col bg-paper-card p-[6%]">
+          <div
+            className="aspect-[3/4] w-full max-h-full flex-1 overflow-hidden rounded-md [&>svg]:h-full [&>svg]:w-full [&>svg]:object-cover"
+            dangerouslySetInnerHTML={{ __html: svg }}
+          />
+          {caption ? (
+            <p className="story-text mt-[4%] text-center text-[clamp(0.55rem,1vw,0.78rem)] italic leading-relaxed text-ink-soft">
+              {caption}
+            </p>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }

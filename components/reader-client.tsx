@@ -92,9 +92,10 @@ export function ReaderClient({ projectId }: { projectId: number }) {
         <div className="h-full bg-terra transition-all duration-500" style={{ width: `${progress}%` }} />
       </div>
 
-      {/* Page */}
+      {/* Page — re-mounts on each turn for the settle transition */}
       <article
-        className="paper-grain relative overflow-hidden rounded-sm border border-line bg-paper-card shadow-book"
+        key={pageIdx}
+        className="paper-grain settle relative overflow-hidden rounded-sm border border-line bg-paper-card shadow-book"
         onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
         onTouchEnd={(e) => {
           if (touchX.current === null) return;
