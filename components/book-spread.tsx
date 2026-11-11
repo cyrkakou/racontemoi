@@ -3,8 +3,9 @@ import type { IllustrationInput } from "@/lib/ai/types";
 import { cn } from "@/lib/utils";
 
 /**
- * Open-book spread: left page = editorial text, right page = atelier
- * illustration. Soft pastel "flat lay" feel — the book as a real object.
+ * Open-book spread: left page = editorial content, right page = illustration.
+ * Soft "flat lay" feel — the book as a real object on the painted background.
+ * Pass `illustrationSrc` to show a real image instead of the demo scene.
  */
 export function BookSpread({
   seed,
@@ -14,6 +15,8 @@ export function BookSpread({
   caption,
   className,
   children,
+  illustrationSrc,
+  illustrationPosition = "76% 82%",
 }: {
   seed: number;
   chapterLabel?: string;
@@ -22,65 +25,66 @@ export function BookSpread({
   caption?: string;
   className?: string;
   children?: React.ReactNode;
+  illustrationSrc?: string;
+  illustrationPosition?: string;
 }) {
-  const input: IllustrationInput = {
-    pageNo: 2,
-    pageKind: "story",
-    sceneText: caption ?? heading ?? "Illustration",
-    characterBible: {
-      name: "Héros·ïne",
-      description:
-        "Jeune héros·ïne de la savane ouest-africaine, silhouette douce en aquarelle, proportions enfant.",
-      styleTokens: {},
-      bibleVersion: 1,
-    },
-    companionBible: null,
-    stylePrefix: "",
-    seed,
-    aspect: "3:4",
-  };
-  const { svg } = composeScene(input);
+  let svg: string | null = null;
+  if (!illustrationSrc) {
+    const input: IllustrationInput = {
+      pageNo: 2,
+      pageKind: "story",
+      sceneText: caption ?? heading ?? "Illustration",
+      characterBible: {
+        name: "Héros·ïne",
+        description:
+          "Jeune héros·ïne de la savane ouest-africaine, silhouette douce en aquarelle, proportions enfant.",
+        styleTokens: {},
+        bibleVersion: 1,
+      },
+      companionBible: null,
+      stylePrefix: "",
+      seed,
+      aspect: "3:4",
+    };
+    svg = composeScene(input).svg;
+  }
 
   return (
     <div
-      className={cn("relative w-full overflow-hidden rounded-[1.4rem] p-[3.2%] pb-[4.5%]", className)}
+      className={cn("relative w-full overflow-hidden rounded-[0.9rem] p-[1.8%] pb-[3%]", className)}
       role="img"
-      aria-label={`Livre ouvert : ${heading}`}
-      style={{ background: "linear-gradient(160deg, #d7e3cc, #c9d9bc 60%, #bfceb2)" }}
+      aria-label={heading ? `Livre ouvert : ${heading}` : "Livre ouvert"}
+      style={{
+        background: "linear-gradient(160deg, #b3c9a3, #9bb488 55%, #87a275)",
+        boxShadow: "var(--shadow-book)",
+      }}
     >
       {/* page-edge stack — bottom + right, like a real closed-stack */}
       <div
         aria-hidden
-        className="absolute bottom-[2.2%] left-[4.5%] right-[4.5%] h-[2.2%] rounded-b-lg"
-        style={{
-          background:
-            "repeating-linear-gradient(180deg, #f7f1e5 0 2px, #e0d4bc 2px 3px)",
-        }}
+        className="absolute bottom-[1.6%] left-[3.4%] right-[3.4%] h-[1.5%] rounded-b-md"
+        style={{ background: "repeating-linear-gradient(180deg, #f7f1e5 0 2px, #d8cbae 2px 3px)" }}
       />
       <div
         aria-hidden
-        className="absolute right-[1.6%] top-[5%] bottom-[6%] w-[1.8%] rounded-r-md"
-        style={{
-          background:
-            "repeating-linear-gradient(90deg, #f7f1e5 0 2px, #e0d4bc 2px 3px)",
-        }}
+        className="absolute right-[0.9%] top-[4%] bottom-[5%] w-[1.2%] rounded-r-sm"
+        style={{ background: "repeating-linear-gradient(90deg, #f7f1e5 0 2px, #d8cbae 2px 3px)" }}
       />
       {/* bookmark ribbon hanging from the bottom center */}
       <div
         aria-hidden
-        className="absolute bottom-0 left-1/2 h-10 w-4 -translate-x-1/2 translate-y-[78%] bg-terra"
-        style={{
-          clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%)",
-        }}
+        className="absolute bottom-0 left-1/2 h-12 w-[1.6%] min-w-[10px] max-w-[18px] -translate-x-1/2 translate-y-[74%] bg-terra"
+        style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%)" }}
       />
       {/* book shadow under the open pages */}
       <div
         aria-hidden
-        className="absolute inset-x-[6%] bottom-[2.4%] h-6 rounded-[50%] bg-ink/20 blur-md"
+        className="absolute inset-x-[8%] bottom-[1.2%] h-5 rounded-[50%] bg-ink/25 blur-md"
       />
-      <div className="relative grid grid-cols-1 overflow-hidden rounded-lg sm:grid-cols-2">
+
+      <div className="relative grid grid-cols-1 overflow-hidden rounded-[0.3rem] sm:grid-cols-2">
         {/* left page */}
-        <div className="paper-grain relative flex flex-col bg-paper-card px-[8%] py-[8%]">
+        <div className="paper-grain relative flex flex-col bg-paper-card px-[8%] py-[9%]">
           {children ?? (
             <>
               <p className="eyebrow text-center text-ink-faint">{chapterLabel}</p>
@@ -95,21 +99,39 @@ export function BookSpread({
             </>
           )}
         </div>
-        {/* spine shadow */}
+        {/* spine fold shadow */}
         <div
-          className="absolute inset-y-0 left-1/2 w-10 -translate-x-1/2"
+          className="absolute inset-y-0 left-1/2 w-12 -translate-x-1/2"
           aria-hidden
           style={{
             background:
-              "linear-gradient(90deg, transparent, rgb(43 33 24 / 0.07) 40%, rgb(43 33 24 / 0.14) 50%, rgb(43 33 24 / 0.07) 60%, transparent)",
+              "linear-gradient(90deg, transparent, rgb(43 33 24 / 0.08) 38%, rgb(43 33 24 / 0.16) 50%, rgb(43 33 24 / 0.08) 62%, transparent)",
           }}
         />
         {/* right page */}
-        <div className="paper-grain relative flex flex-col bg-paper-card p-[6%]">
-          <div
-            className="aspect-[3/4] w-full max-h-full flex-1 overflow-hidden rounded-md [&>svg]:h-full [&>svg]:w-full [&>svg]:object-cover"
-            dangerouslySetInnerHTML={{ __html: svg }}
-          />
+        <div className="paper-grain relative flex flex-col bg-paper-card p-[4.5%]">
+          <div className="relative w-full flex-1 overflow-hidden rounded-[0.25rem]">
+            {illustrationSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={illustrationSrc}
+                alt=""
+                className="h-full w-full object-cover"
+                style={{ objectPosition: illustrationPosition }}
+              />
+            ) : svg ? (
+              <div
+                className="h-full w-full [&>svg]:h-full [&>svg]:w-full"
+                dangerouslySetInnerHTML={{ __html: svg }}
+              />
+            ) : null}
+            {/* watercolor wash soften the print edges */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{ boxShadow: "inset 0 0 0 1px rgb(43 33 24 / 0.06), inset 0 0 24px rgb(247 241 229 / 0.35)" }}
+            />
+          </div>
           {caption ? (
             <p className="story-text mt-[4%] text-center text-[clamp(0.55rem,1vw,0.78rem)] italic leading-relaxed text-ink-soft">
               {caption}

@@ -70,6 +70,8 @@ export default async function Home() {
           <Reveal>
             <BookSpread
               seed={(pilot?.id ?? 1) * 7919}
+              illustrationSrc="/hero-savanna.jpg"
+              illustrationPosition="78% 88%"
               caption="Des contes, des royaumes, des familles et des voyages d’imagination, pour grandir fier de ses racines."
             >
               <p className="eyebrow text-center tracking-[0.24em] text-terra-deep">
@@ -90,10 +92,10 @@ export default async function Home() {
               <div className="mt-6 grid grid-cols-3 gap-2">
                 {FEATURES.map((f) => (
                   <div key={f.label} className="flex flex-col items-center gap-1.5 text-center">
-                    <span className="grid h-10 w-10 place-items-center rounded-full bg-ochre/15 text-ochre">
-                      <f.icon className="h-4.5 w-4.5" strokeWidth={1.6} aria-hidden />
+                    <span className="grid h-12 w-12 place-items-center rounded-full bg-ochre/15 text-ochre">
+                      <f.icon className="h-5 w-5" strokeWidth={1.6} aria-hidden />
                     </span>
-                    <span className="text-[0.68rem] font-medium leading-tight text-ink-soft">
+                    <span className="text-[0.72rem] font-medium leading-tight text-ink-soft">
                       {f.label}
                     </span>
                   </div>
