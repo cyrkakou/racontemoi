@@ -40,10 +40,7 @@ export function BookCover({
 
   return (
     <div
-      className={cn(
-        "relative aspect-[3/4] w-full overflow-hidden rounded-md shadow-page",
-        className,
-      )}
+      className={cn("cover-frame relative aspect-[3/4] w-full overflow-hidden rounded-md", className)}
       role="img"
       aria-label={`Couverture : ${title}`}
     >
@@ -51,14 +48,16 @@ export function BookCover({
         className="absolute inset-0 [&>svg]:h-full [&>svg]:w-full"
         dangerouslySetInnerHTML={{ __html: svg }}
       />
+      <div className="cover-spine" aria-hidden />
       {/* Editorial title plate */}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent px-5 pb-5 pt-16">
-        <p className="font-display text-paper text-lg leading-tight font-semibold sm:text-xl">
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-night/90 via-night/45 to-transparent px-5 pb-5 pt-20">
+        {subtitle ? (
+          <p className="eyebrow mb-2 text-paper/70">{subtitle}</p>
+        ) : null}
+        <p className="font-display text-balance text-xl font-semibold leading-tight text-paper sm:text-2xl">
           {title}
         </p>
-        {subtitle ? (
-          <p className="mt-1 font-story text-paper/80 text-sm italic">{subtitle}</p>
-        ) : null}
+        <p className="mt-2 h-px w-10 bg-ochre" aria-hidden />
       </div>
     </div>
   );

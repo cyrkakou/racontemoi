@@ -94,7 +94,7 @@ export function ReaderClient({ projectId }: { projectId: number }) {
 
       {/* Page */}
       <article
-        className="paper-grain overflow-hidden rounded-lg border border-line bg-paper shadow-page"
+        className="paper-grain relative overflow-hidden rounded-sm border border-line bg-paper-card shadow-book"
         onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
         onTouchEnd={(e) => {
           if (touchX.current === null) return;
@@ -104,6 +104,7 @@ export function ReaderClient({ projectId }: { projectId: number }) {
           touchX.current = null;
         }}
       >
+        <div className="pointer-events-none absolute inset-3 border border-line/60" aria-hidden />
         {fileId ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -112,20 +113,29 @@ export function ReaderClient({ projectId }: { projectId: number }) {
             className={cn("w-full", isCover ? "aspect-[3/4] object-cover" : "aspect-[3/2] object-cover")}
           />
         ) : (
-          <div className="grid aspect-[3/2] place-items-center bg-paper-deep text-ink-soft/50">
-            <p className="font-display text-lg">Illustration en préparation</p>
+          <div className="grid aspect-[3/2] place-items-center bg-paper-deep/60 text-ink-soft/50">
+            <p className="font-display text-lg italic">Illustration en préparation</p>
           </div>
         )}
 
         {(text || (isCover && pageContent?.title)) ? (
-          <div className={cn("px-6 py-6 sm:px-10", isCover && "text-center")}>
+          <div className={cn("relative px-7 py-8 sm:px-12 sm:py-10", isCover && "text-center")}>
             {isCover && pageContent?.title ? (
-              <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">
-                {pageContent.title}
-              </h2>
+              <>
+                <p className="eyebrow text-ochre">Racontemoi</p>
+                <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+                  {pageContent.title}
+                </h2>
+                <p className="mx-auto mt-4 h-px w-16 bg-ochre" aria-hidden />
+              </>
             ) : null}
             {text ? (
-              <p className="story-text mx-auto mt-4 whitespace-pre-line text-ink">
+              <p
+                className={cn(
+                  "story-text mx-auto mt-5 whitespace-pre-line text-ink",
+                  !isCover && "drop-cap",
+                )}
+              >
                 {text}
               </p>
             ) : null}

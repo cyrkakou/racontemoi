@@ -29,8 +29,13 @@ export default async function AccountPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <header>
-        <h1 className="font-display text-4xl font-semibold text-ink">{fr.account.title}</h1>
-        <p className="story-text mt-3 text-lg text-ink-soft">
+        <div className="rule-ornament max-w-[8rem]">
+          <p className="eyebrow text-terra-deep">Mon atelier</p>
+        </div>
+        <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+          {fr.account.title}
+        </h1>
+        <p className="story-text mt-4 max-w-xl text-lg text-ink-soft">
           {fr.account.subtitle}
           {user.name ? <> Bonjour {user.name}.</> : null}
         </p>

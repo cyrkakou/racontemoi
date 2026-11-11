@@ -79,64 +79,75 @@ export default async function StoryPage({ params }: Props) {
   const storyPages = plan.pages?.filter((p) => p.kind === "story").length ?? 10;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <main className="mx-auto max-w-6xl px-4 pb-24 pt-10 sm:px-6">
       <Link
         href="/catalogue"
-        className="inline-flex items-center gap-1.5 text-sm text-ink-soft hover:text-ink transition-colors"
+        className="link-sweep inline-flex items-center gap-2 pb-1 text-sm font-medium text-ink-soft hover:text-ink"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         {fr.catalog.backToCatalog}
       </Link>
 
-      <div className="mt-8 grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
-        {/* Left: cover + meta */}
-        <div>
+      <div className="mt-10 grid gap-14 lg:grid-cols-[0.8fr_1.2fr]">
+        {/* Left: cover + spec sheet */}
+        <div className="lg:sticky lg:top-24 lg:self-start">
           <BookCover
             seed={template.id * 7919}
             title={template.title}
             subtitle={collection?.titleFr}
-            className="mx-auto max-w-[300px] lg:max-w-sm"
+            className="mx-auto max-w-[290px] lg:max-w-[340px]"
           />
-          <dl className="mt-8 space-y-4 text-sm">
-            <div className="flex gap-3">
-              <dt className="w-28 shrink-0 text-ink-soft">{fr.story.pages}</dt>
-              <dd className="text-ink">{storyPages + 2} pages illustrées</dd>
-            </div>
+          <dl className="mt-10 divide-y divide-line border-y border-line">
             {collection ? (
-              <div className="flex gap-3">
-                <dt className="w-28 shrink-0 text-ink-soft">Collection</dt>
-                <dd className="text-ink">{collection.titleFr}</dd>
+              <div className="flex items-baseline justify-between gap-4 py-3.5">
+                <dt className="eyebrow text-ink-faint">Collection</dt>
+                <dd className="font-display text-base font-semibold text-ink">{collection.titleFr}</dd>
               </div>
             ) : null}
+            <div className="flex items-baseline justify-between gap-4 py-3.5">
+              <dt className="eyebrow text-ink-faint">{fr.story.pages}</dt>
+              <dd className="font-display text-base font-semibold text-ink">{storyPages + 2} pages illustrées</dd>
+            </div>
             {context ? (
-              <div className="flex gap-3">
-                <dt className="w-28 shrink-0 text-ink-soft">{fr.story.culturalContext}</dt>
-                <dd className="text-ink">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-ochre/15 px-3 py-1 text-xs font-medium text-ochre">
-                    <Globe2 className="h-3.5 w-3.5" aria-hidden />
+              <div className="py-4">
+                <dt className="eyebrow flex items-center gap-2 text-ink-faint">
+                  <Globe2 className="h-3.5 w-3.5" aria-hidden />
+                  {fr.story.culturalContext}
+                </dt>
+                <dd className="mt-3">
+                  <span className="inline-flex items-center rounded-full border border-ochre/40 bg-ochre/10 px-3 py-1 text-xs font-medium text-ochre">
                     {context.traditionType === "inspiration"
                       ? fr.story.inspirationNote
                       : context.traditionType === "history"
                         ? "Contexte historique attesté"
                         : "Fiction originale"}
                   </span>
-                  <p className="story-text mt-3 text-ink-soft">{context.summaryFr}</p>
+                  <p className="story-text mt-4 text-[0.95rem] leading-relaxed text-ink-soft">
+                    {context.summaryFr}
+                  </p>
                 </dd>
               </div>
             ) : null}
           </dl>
         </div>
 
-        {/* Right: synopsis + personalization */}
+        {/* Right: title + synopsis + personalization */}
         <div>
-          <h1 className="font-display text-4xl font-semibold text-ink">{template.title}</h1>
-          <p className="story-text mt-4 text-lg text-ink-soft">{template.synopsisFr}</p>
+          <div className="rule-ornament max-w-xs">
+            <p className="eyebrow text-terra-deep">{fr.story.synopsis}</p>
+          </div>
+          <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-ink sm:text-5xl">
+            {template.title}
+          </h1>
+          <p className="story-text mt-6 text-xl leading-relaxed text-ink-soft">
+            {template.synopsisFr}
+          </p>
 
-          <section className="mt-10 rounded-2xl border border-line bg-paper-deep/50 p-6 sm:p-8 shadow-paper">
+          <section className="mt-14 border-t-2 border-ink/80 pt-10">
             <h2 className="font-display text-2xl font-semibold text-ink">
               {fr.story.whatYouPersonalize}
             </h2>
-            <div className="mt-6">
+            <div className="mt-8">
               <PersonalizeForm
                 templateSlug={template.slug}
                 fields={fields}
@@ -144,7 +155,7 @@ export default async function StoryPage({ params }: Props) {
               />
             </div>
             {!user ? (
-              <p className="mt-4 flex items-center gap-2 text-sm text-ink-soft">
+              <p className="mt-6 flex items-center gap-2 text-sm text-ink-soft">
                 <BookOpen className="h-4 w-4" aria-hidden />
                 Un compte est nécessaire pour sauvegarder votre livre.
               </p>

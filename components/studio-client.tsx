@@ -161,16 +161,19 @@ export function StudioClient({ projectId }: { projectId: number }) {
       {/* Header + stepper */}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.14em] text-ink-soft">
+          <div className="rule-ornament max-w-[7rem]">
+            <p className="eyebrow text-terra-deep">L’atelier</p>
+          </div>
+          <p className="mt-4 text-xs uppercase tracking-[0.18em] text-ink-soft">
             {STATUS_LABEL[project.status] ?? project.status}
           </p>
-          <h1 className="font-display mt-1 text-3xl font-semibold text-ink sm:text-4xl">
+          <h1 className="font-display mt-2 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
             {project.title}
           </h1>
         </div>
         <Link
           href="/compte"
-          className="text-sm text-ink-soft hover:text-ink transition-colors"
+          className="link-sweep pb-1 text-sm font-medium text-ink-soft hover:text-ink"
         >
           ← {fr.reader.backToBook}
         </Link>
@@ -206,9 +209,10 @@ export function StudioClient({ projectId }: { projectId: number }) {
       ) : null}
 
       {/* Step 1 — Character bible */}
-      <section className="mt-10 rounded-2xl border border-line bg-paper p-6 shadow-paper sm:p-8">
-        <h2 className="font-display flex items-center gap-2 text-2xl font-semibold text-ink">
-          <Feather className="h-5 w-5 text-terra" aria-hidden />
+      <section className="mt-12 border-t-2 border-ink/80 pt-8">
+        <p className="eyebrow text-ochre">Étape 01</p>
+        <h2 className="font-display mt-2 flex items-center gap-3 text-3xl font-semibold tracking-tight text-ink">
+          <Feather className="h-5 w-5 text-terra" strokeWidth={1.6} aria-hidden />
           {fr.studio.bibleTitle}
         </h2>
         {hero ? (
@@ -229,9 +233,12 @@ export function StudioClient({ projectId }: { projectId: number }) {
       </section>
 
       {/* Step 2 — Story */}
-      <section className="mt-8 rounded-2xl border border-line bg-paper p-6 shadow-paper sm:p-8">
+      <section className="mt-12 border-t border-line pt-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-2xl font-semibold text-ink">{fr.studio.stepStory}</h2>
+          <div>
+            <p className="eyebrow text-ochre">Étape 02</p>
+            <h2 className="font-display mt-2 text-3xl font-semibold tracking-tight text-ink">{fr.studio.stepStory}</h2>
+          </div>
           {!project.approvedStoryVersionId ? (
             <button
               onClick={() => post(`/api/projects/${projectId}/narrative`, { action: "generate" }, "narrative")}
@@ -266,9 +273,12 @@ export function StudioClient({ projectId }: { projectId: number }) {
 
       {/* Step 3 — Illustrations */}
       {project.approvedStoryVersionId ? (
-        <section className="mt-8 rounded-2xl border border-line bg-paper p-6 shadow-paper sm:p-8">
+        <section className="mt-12 border-t border-line pt-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-display text-2xl font-semibold text-ink">{fr.studio.stepIllustrate}</h2>
+            <div>
+              <p className="eyebrow text-ochre">Étape 03</p>
+              <h2 className="font-display mt-2 text-3xl font-semibold tracking-tight text-ink">{fr.studio.stepIllustrate}</h2>
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => post(`/api/projects/${projectId}/illustrations`, { action: "batch" }, "batch")}
@@ -304,9 +314,10 @@ export function StudioClient({ projectId }: { projectId: number }) {
 
       {/* Step 4 — Read & export */}
       {allApproved ? (
-        <section className="mt-8 rounded-2xl border border-botanical/40 bg-botanical/5 p-6 shadow-paper sm:p-8">
-          <h2 className="font-display flex items-center gap-2 text-2xl font-semibold text-ink">
-            <BookOpen className="h-5 w-5 text-botanical" aria-hidden />
+        <section className="paper-grain relative mt-12 overflow-hidden rounded-sm border border-botanical/30 bg-gradient-to-br from-botanical/10 via-paper to-ochre/10 p-8 shadow-paper sm:p-10">
+          <p className="eyebrow text-botanical">Étape 04</p>
+          <h2 className="font-display mt-2 flex items-center gap-3 text-3xl font-semibold tracking-tight text-ink">
+            <BookOpen className="h-5 w-5 text-botanical" strokeWidth={1.6} aria-hidden />
             {fr.studio.stepRead}
           </h2>
           <p className="story-text mt-3 text-ink-soft">

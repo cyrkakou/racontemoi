@@ -2,58 +2,51 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { BookOpen } from "lucide-react";
 import { fr } from "@/lib/i18n/fr";
 
 export function SiteNav() {
   const { status } = useSession();
   const authed = status === "authenticated";
 
+  const linkCls =
+    "link-sweep rounded-full px-3 py-2 text-[0.95rem] text-ink-soft transition-colors hover:text-ink";
+
   return (
-    <header className="border-b border-line/70 bg-paper/90 backdrop-blur-sm sticky top-0 z-40">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-terra text-paper shadow-paper">
-            <BookOpen className="h-4.5 w-4.5" strokeWidth={1.8} aria-hidden />
-          </span>
-          <span className="font-display text-xl font-semibold tracking-tight text-ink">
+    <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/85 backdrop-blur-md">
+      <div className="mx-auto flex h-[4.5rem] max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="group flex items-baseline gap-3">
+          <span className="font-display text-[1.65rem] font-semibold tracking-tight text-ink transition-colors group-hover:text-terra-deep">
             {fr.brand}
+          </span>
+          <span className="hidden border-l border-line pl-3 font-story text-sm italic text-ink-faint sm:inline">
+            contes &amp; atelier
           </span>
         </Link>
 
-        <nav className="flex items-center gap-1 sm:gap-2 text-sm">
-          <Link
-            href="/catalogue"
-            className="rounded-full px-3 py-2 text-ink-soft hover:text-ink hover:bg-paper-deep transition-colors"
-          >
+        <nav className="flex items-center gap-1 text-sm sm:gap-2" aria-label="Navigation principale">
+          <Link href="/catalogue" className={linkCls}>
             {fr.nav.catalog}
           </Link>
           {authed ? (
             <>
-              <Link
-                href="/compte"
-                className="rounded-full px-3 py-2 text-ink-soft hover:text-ink hover:bg-paper-deep transition-colors"
-              >
+              <Link href="/compte" className={linkCls}>
                 {fr.nav.account}
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="rounded-full px-3 py-2 text-ink-soft hover:text-ink hover:bg-paper-deep transition-colors"
+                className={`${linkCls} cursor-pointer bg-transparent`}
               >
                 {fr.nav.logout}
               </button>
             </>
           ) : status === "unauthenticated" ? (
             <>
-              <Link
-                href="/connexion"
-                className="rounded-full px-3 py-2 text-ink-soft hover:text-ink hover:bg-paper-deep transition-colors"
-              >
+              <Link href="/connexion" className={linkCls}>
                 {fr.nav.login}
               </Link>
               <Link
                 href="/inscription"
-                className="rounded-full bg-ink text-paper px-4 py-2 font-medium hover:bg-terra-deep transition-colors"
+                className="ml-1 inline-flex items-center rounded-full bg-ink px-5 py-2.5 text-[0.95rem] font-medium text-paper transition-colors duration-300 hover:bg-terra-deep"
               >
                 {fr.nav.start}
               </Link>

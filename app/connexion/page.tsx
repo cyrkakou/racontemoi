@@ -7,10 +7,15 @@ export const metadata: Metadata = { title: fr.auth.loginTitle };
 
 export default function LoginPage() {
   return (
-    <main className="mx-auto flex max-w-md flex-col justify-center px-4 py-20">
-      <h1 className="font-display text-3xl font-semibold text-ink">{fr.auth.loginTitle}</h1>
-      <p className="story-text mt-2 text-ink-soft">{fr.auth.loginSub}</p>
-      <div className="mt-8 rounded-2xl border border-line bg-paper p-6 shadow-paper sm:p-8">
+    <main className="mx-auto flex max-w-lg flex-col justify-center px-4 py-24">
+      <div className="rule-ornament max-w-[8rem]">
+        <p className="eyebrow text-terra-deep">L’atelier</p>
+      </div>
+      <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        {fr.auth.loginTitle}
+      </h1>
+      <p className="story-text mt-4 text-lg text-ink-soft">{fr.auth.loginSub}</p>
+      <div className="mt-10 border-t-2 border-ink/80 pt-8">
         <Suspense>
           <LoginForm />
         </Suspense>

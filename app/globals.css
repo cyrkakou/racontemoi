@@ -4,15 +4,20 @@
   /* Racontemoi design tokens — docs/design-system.md */
   --color-paper: #f7f1e5;
   --color-paper-deep: #efe6d3;
+  --color-paper-card: #fbf7ec;
   --color-ink: #2b2118;
   --color-ink-soft: #5c4f3f;
+  --color-ink-faint: #8a7a64;
   --color-line: #e0d4bc;
+  --color-line-strong: #cbb894;
   --color-terra: #b4552d;
   --color-terra-deep: #8f3f1f;
   --color-ochre: #c08a2d;
   --color-botanical: #3e5c33;
   --color-clay: #d9c7a7;
   --color-danger: #a03a2a;
+  --color-night: #241a12;
+  --color-night-soft: #3a2c1c;
 
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-story: var(--font-newsreader), Georgia, serif;
@@ -20,10 +25,19 @@
 
   --shadow-paper: 0 1px 2px rgb(43 33 24 / 0.08), 0 8px 24px rgb(43 33 24 / 0.08);
   --shadow-page: 0 2px 4px rgb(43 33 24 / 0.1), 0 16px 40px rgb(43 33 24 / 0.14);
+  --shadow-book: 0 1px 1px rgb(43 33 24 / 0.12), 0 12px 28px rgb(43 33 24 / 0.16), 0 32px 64px rgb(43 33 24 / 0.18);
+
+  --animate-fade-up: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 html {
   background: var(--color-paper);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -33,13 +47,14 @@ body {
   font-size: 1rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-ochre) 30%, transparent);
+  background: color-mix(in srgb, var(--color-ochre) 35%, transparent);
 }
 
-/* Subtle paper grain overlay */
+/* ---------- Paper grain ---------- */
 .paper-grain {
   position: relative;
 }
@@ -49,22 +64,112 @@ body {
   inset: 0;
   pointer-events: none;
   opacity: 0.05;
+  z-index: 1;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Focus visibility contract */
+/* ---------- Focus visibility ---------- */
 :focus-visible {
   outline: 2px solid var(--color-terra);
   outline-offset: 2px;
   border-radius: 2px;
 }
 
-/* Story text measure */
+/* ---------- Story text ---------- */
 .story-text {
   font-family: var(--font-story);
   font-size: 1.125rem;
   line-height: 1.7;
   max-width: 68ch;
+}
+
+/* ---------- Editorial helpers ---------- */
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.rule-ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.rule-ornament::before,
+.rule-ornament::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--color-line-strong, #cbb894));
+}
+.rule-ornament::after {
+  background: linear-gradient(90deg, var(--color-line-strong, #cbb894), transparent);
+}
+
+.drop-cap::first-letter {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 3.4em;
+  float: left;
+  line-height: 0.82;
+  padding-right: 0.12em;
+  padding-top: 0.06em;
+  color: var(--color-terra);
+}
+
+/* Book cover frame */
+.cover-frame {
+  box-shadow: var(--shadow-book);
+}
+.cover-frame::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgb(247 241 229 / 0.55);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 2;
+}
+.cover-spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.28), rgb(0 0 0 / 0.06) 60%, transparent);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Underline link sweep */
+.link-sweep {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: left calc(100% - 2px);
+  transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-sweep:hover {
+  background-size: 100% 1px;
+}
+
+/* Card lift */
+.lift {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-page);
+}
+
+/* Slow image settle */
+.settle {
+  animation: settle 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes settle {
+  from { opacity: 0; transform: scale(1.015); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
