@@ -18,6 +18,9 @@
   --color-danger: #a03a2a;
   --color-night: #241a12;
   --color-night-soft: #3a2c1c;
+  --color-blush: #f6e7de;
+  --color-blush-deep: #ecd4c6;
+  --color-sage: #d7e3cc;
 
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-story: var(--font-newsreader), Georgia, serif;
