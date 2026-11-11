@@ -3,10 +3,24 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- cPanel Passenger loads this startup adapter as CommonJS. */
 
 const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
+
+const envFile = path.join(__dirname, ".env");
+if (fs.existsSync(envFile)) {
+  if (typeof process.loadEnvFile !== "function") {
+    throw new Error("Node.js 20.12 or newer is required to load the runtime .env file.");
+  }
+  process.loadEnvFile(envFile);
+}
 
 process.env.NODE_ENV = "production";
 process.env.HOSTNAME ||= "0.0.0.0";
+process.env.PERSISTENT_STORAGE_DIR ||= path.join(
+  os.homedir(),
+  "private",
+  "african-storybook-poc",
+);
 
 const standaloneServer = path.join(
   __dirname,
