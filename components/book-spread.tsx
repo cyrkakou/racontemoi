@@ -13,18 +13,20 @@ export function BookSpread({
   text,
   caption,
   className,
+  children,
 }: {
   seed: number;
   chapterLabel?: string;
-  heading: string;
-  text: string;
+  heading?: string;
+  text?: string;
   caption?: string;
   className?: string;
+  children?: React.ReactNode;
 }) {
   const input: IllustrationInput = {
     pageNo: 2,
     pageKind: "story",
-    sceneText: caption ?? heading,
+    sceneText: caption ?? heading ?? "Illustration",
     characterBible: {
       name: "Héros·ïne",
       description:
@@ -51,18 +53,22 @@ export function BookSpread({
         aria-hidden
         className="absolute inset-x-[6%] bottom-[2.4%] h-6 rounded-[50%] bg-ink/20 blur-md"
       />
-      <div className="relative grid grid-cols-2 overflow-hidden rounded-lg">
+      <div className="relative grid grid-cols-1 overflow-hidden rounded-lg sm:grid-cols-2">
         {/* left page */}
         <div className="paper-grain relative flex flex-col bg-paper-card px-[8%] py-[8%]">
-          <p className="eyebrow text-center text-ink-faint">{chapterLabel}</p>
-          <h3 className="mt-2 text-center font-display text-[clamp(0.95rem,2vw,1.45rem)] font-semibold leading-snug tracking-tight text-ink">
-            {heading}
-          </h3>
-          <p className="mx-auto mt-2.5 h-px w-9 bg-ochre/70" aria-hidden />
-          <p className="story-text mt-[7%] flex-1 text-[clamp(0.62rem,1.25vw,0.92rem)] leading-[1.8] text-ink-soft">
-            {text}
-          </p>
-          <p className="mt-[6%] text-center font-display text-xs italic text-ink-faint" aria-hidden>6</p>
+          {children ?? (
+            <>
+              <p className="eyebrow text-center text-ink-faint">{chapterLabel}</p>
+              <h3 className="mt-2 text-center font-display text-[clamp(0.95rem,2vw,1.45rem)] font-semibold leading-snug tracking-tight text-ink">
+                {heading}
+              </h3>
+              <p className="mx-auto mt-2.5 h-px w-9 bg-ochre/70" aria-hidden />
+              <p className="story-text mt-[7%] flex-1 text-[clamp(0.62rem,1.25vw,0.92rem)] leading-[1.8] text-ink-soft">
+                {text}
+              </p>
+              <p className="mt-[6%] text-center font-display text-xs italic text-ink-faint" aria-hidden>6</p>
+            </>
+          )}
         </div>
         {/* spine shadow */}
         <div

@@ -100,56 +100,40 @@ export default async function Home() {
           <Star className="h-7 w-7" color="#b4552d" />
         </Drift>
 
-        <div className="relative mx-auto max-w-5xl px-4 pb-24 pt-16 text-center sm:px-6 lg:pt-20">
+        {/* The hero IS the open book — everything lives inside the pages */}
+        <div className="relative mx-auto max-w-5xl px-4 pb-28 pt-14 sm:px-6 lg:pt-16">
           <Reveal>
-            <div className="rule-ornament mx-auto max-w-xs">
-              <p className="eyebrow text-terra-deep">{fr.home.eyebrow}</p>
-            </div>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <h1 className="mx-auto mt-8 max-w-3xl font-display text-[2.5rem] font-semibold leading-[1.06] tracking-tight text-ink sm:text-6xl">
-              Un conte africain,
-              <br />
-              <em className="font-medium italic text-terra-deep">rien que pour votre enfant.</em>
-            </h1>
-          </Reveal>
-          <Reveal delay={0.16}>
-            <p className="story-text mx-auto mt-7 max-w-xl text-lg leading-relaxed text-ink-soft">
-              {fr.home.heroSub}
-            </p>
-          </Reveal>
-          <Reveal delay={0.24}>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-              <Link
-                href={pilot ? `/histoires/${pilot.slug}` : "/catalogue"}
-                className="sheen press group inline-flex items-center gap-3 rounded-full bg-terra px-7 py-3.5 text-base font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
-              >
-                {fr.home.ctaPrimary}
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
-              </Link>
-              <Link
-                href="/catalogue"
-                className="link-sweep press inline-flex items-center gap-2 pb-1 text-base font-medium text-ink"
-              >
-                {fr.home.ctaSecondary}
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-
-        {/* open-book centerpiece — tilts toward the cursor */}
-        {pilot ? (
-          <Reveal delay={0.15} className="relative mx-auto max-w-4xl px-4 pb-28 sm:px-6">
-            <Tilt max={3.5}>
-              <BookSpread
-                seed={pilot.id * 7919}
-                heading="Le Baobab aux Mille Secrets"
-                text="Au cœur de la savane dorée, là où le vent sait tous les noms, se dresse un baobab plus vieux que les étoiles. Dans son tronc large comme une maison, les secrets du village dorment depuis cent générations — et attendent quelqu’un de courageux pour les écouter."
-                caption="Chaque page, peinte à la main, rien que pour votre enfant."
-              />
+            <Tilt max={3}>
+              <BookSpread seed={(pilot?.id ?? 1) * 7919} caption="Chaque page, peinte à la main, rien que pour votre enfant.">
+                <p className="eyebrow text-center text-terra-deep">{fr.home.eyebrow}</p>
+                <h1 className="mt-4 text-center font-display text-[clamp(1.5rem,3.2vw,2.6rem)] font-semibold leading-[1.1] tracking-tight text-ink">
+                  Un conte africain,
+                  <br />
+                  <em className="font-medium italic text-terra-deep">rien que pour votre enfant.</em>
+                </h1>
+                <p className="mx-auto mt-4 h-px w-12 bg-ochre/70" aria-hidden />
+                <p className="story-text mt-5 flex-1 text-center text-[clamp(0.8rem,1.5vw,1rem)] leading-[1.8] text-ink-soft">
+                  {fr.home.heroSub}
+                </p>
+                <div className="mt-[8%] flex flex-wrap items-center justify-center gap-x-5 gap-y-3 pb-1">
+                  <Link
+                    href={pilot ? `/histoires/${pilot.slug}` : "/catalogue"}
+                    className="sheen press group inline-flex items-center gap-2 rounded-full bg-terra px-5 py-2.5 text-sm font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
+                  >
+                    {fr.home.ctaPrimary}
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+                  </Link>
+                  <Link
+                    href="/catalogue"
+                    className="link-sweep press inline-flex items-center gap-2 pb-0.5 text-sm font-medium text-ink"
+                  >
+                    {fr.home.ctaSecondary}
+                  </Link>
+                </div>
+              </BookSpread>
             </Tilt>
           </Reveal>
-        ) : null}
+        </div>
       </section>
 
       {/* ————— How it works ————— */}
