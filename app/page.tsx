@@ -49,7 +49,7 @@ export default async function Home() {
         {/* soft veil so the painted page edges stay readable */}
         <div aria-hidden className="absolute inset-0 bg-paper/10" />
 
-        <div className="relative mx-auto max-w-5xl px-4 pb-24 pt-[6.5rem] sm:px-6 lg:pb-28 lg:pt-28">
+        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-[5.5rem] sm:px-6 lg:pb-20 lg:pt-24">
           {/* carousel arrows — decorative, echo the reference mockup */}
           <button
             aria-hidden
@@ -67,7 +67,7 @@ export default async function Home() {
           </button>
 
           <Reveal>
-            <div className="relative mx-auto max-w-4xl">
+            <div className="relative mx-auto max-w-[72rem]">
               {/* The real illustrated open book — content sits on the pages */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -77,13 +77,13 @@ export default async function Home() {
               />
 
               {/* left page — desktop overlay */}
-              <div className="absolute left-[8.5%] top-[8%] hidden h-[78%] w-[37.5%] flex-col items-center justify-start overflow-hidden text-center sm:flex">
-                <p className="eyebrow tracking-[0.22em] text-terra-deep" style={{ fontSize: "clamp(0.5rem,0.9vw,0.72rem)" }}>
+              <div className="absolute left-[9%] top-[7%] hidden h-[84%] w-[36.5%] flex-col items-center justify-start overflow-hidden text-center sm:flex">
+                <p className="eyebrow tracking-[0.22em] text-terra-deep" style={{ fontSize: "clamp(0.5rem,0.85vw,0.72rem)" }}>
                   ✦ Des livres uniques ✦
                 </p>
                 <h1
                   className="mt-[4%] font-display font-semibold leading-[1.08] tracking-tight text-ink"
-                  style={{ fontSize: "clamp(1rem,2.6vw,2.2rem)" }}
+                  style={{ fontSize: "clamp(1.1rem,2.8vw,2.4rem)" }}
                 >
                   Votre enfant, héros
                   <br />
@@ -93,7 +93,7 @@ export default async function Home() {
                 <p className="mt-[3%] h-px w-12 bg-ochre/70" aria-hidden />
                 <p
                   className="story-text mt-[4%] leading-[1.7] text-ink-soft"
-                  style={{ fontSize: "clamp(0.55rem,1.05vw,0.85rem)" }}
+                  style={{ fontSize: "clamp(0.6rem,1.05vw,0.88rem)" }}
                 >
                   Créez un livre illustré et personnalisé, inspiré des contes,
                   de l’histoire et des imaginaires d’Afrique. Une expérience
@@ -105,11 +105,11 @@ export default async function Home() {
                     <div key={f.label} className="flex flex-col items-center gap-1 text-center">
                       <span
                         className="grid place-items-center rounded-full bg-ochre/15 text-ochre"
-                        style={{ width: "clamp(26px,3.2vw,44px)", height: "clamp(26px,3.2vw,44px)" }}
+                        style={{ width: "clamp(26px,3vw,42px)", height: "clamp(26px,3vw,42px)" }}
                       >
                         <f.icon className="h-[55%] w-[55%]" strokeWidth={1.6} aria-hidden />
                       </span>
-                      <span className="leading-tight text-ink-soft" style={{ fontSize: "clamp(0.45rem,0.8vw,0.66rem)" }}>
+                      <span className="leading-tight text-ink-soft" style={{ fontSize: "clamp(0.45rem,0.75vw,0.66rem)" }}>
                         {f.label}
                       </span>
                     </div>
@@ -119,7 +119,7 @@ export default async function Home() {
                   <Link
                     href={pilotHref}
                     className="sheen press group inline-flex items-center gap-2 rounded-full bg-terra font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
-                    style={{ fontSize: "clamp(0.6rem,1vw,0.85rem)", padding: "0.6em 1.4em" }}
+                    style={{ fontSize: "clamp(0.62rem,1vw,0.88rem)", padding: "0.6em 1.4em" }}
                   >
                     Créer mon livre maintenant
                     <ArrowRight className="h-[1em] w-[1em] transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
@@ -128,14 +128,14 @@ export default async function Home() {
               </div>
 
               {/* right page — desktop overlay */}
-              <div className="absolute right-[7.5%] top-[8%] hidden h-[78%] w-[37%] flex-col items-center justify-center sm:flex">
+              <div className="absolute right-[7.5%] top-[8%] hidden h-[76%] w-[37%] flex-col items-center justify-center sm:flex">
                 <div className="relative w-full flex-1 overflow-hidden rounded-[0.4rem]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/hero-savanna.jpg"
                     alt=""
                     className="h-full w-full object-cover"
-                    style={{ objectPosition: "76% 84%" }}
+                    style={{ objectPosition: "82% 96%" }}
                   />
                   <div
                     aria-hidden
