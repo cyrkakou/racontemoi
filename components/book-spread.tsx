@@ -48,6 +48,31 @@ export function BookSpread({
       aria-label={`Livre ouvert : ${heading}`}
       style={{ background: "linear-gradient(160deg, #d7e3cc, #c9d9bc 60%, #bfceb2)" }}
     >
+      {/* page-edge stack — bottom + right, like a real closed-stack */}
+      <div
+        aria-hidden
+        className="absolute bottom-[2.2%] left-[4.5%] right-[4.5%] h-[2.2%] rounded-b-lg"
+        style={{
+          background:
+            "repeating-linear-gradient(180deg, #f7f1e5 0 2px, #e0d4bc 2px 3px)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute right-[1.6%] top-[5%] bottom-[6%] w-[1.8%] rounded-r-md"
+        style={{
+          background:
+            "repeating-linear-gradient(90deg, #f7f1e5 0 2px, #e0d4bc 2px 3px)",
+        }}
+      />
+      {/* bookmark ribbon hanging from the bottom center */}
+      <div
+        aria-hidden
+        className="absolute bottom-0 left-1/2 h-10 w-4 -translate-x-1/2 translate-y-[78%] bg-terra"
+        style={{
+          clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%)",
+        }}
+      />
       {/* book shadow under the open pages */}
       <div
         aria-hidden

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, BookOpen, Sparkles, Leaf } from "lucide-react";
 import { BookSpread } from "@/components/book-spread";
-import { Reveal, Tilt, Drift } from "@/components/motion";
+import { Reveal } from "@/components/motion";
 import { fr } from "@/lib/i18n/fr";
 import { getDb } from "@/lib/db";
 import { bookTemplates } from "@/lib/db/schema";
@@ -30,109 +30,94 @@ const STEPS = [
   { title: fr.home.how4Title, text: fr.home.how4Text },
 ];
 
-/* Small decorative shapes — the "toys" scattered around the book,
-   echoing the reference flat-lay. */
-function Star({ className, color = "#c08a2d" }: { className?: string; color?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"
-        fill={color}
-        opacity="0.55"
-      />
-    </svg>
-  );
-}
-function Leaf({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z"
-        stroke="#3e5c33"
-        strokeWidth="1.6"
-        opacity="0.5"
-      />
-      <path d="M4 20C8 14 12 10 18 7" stroke="#3e5c33" strokeWidth="1.2" opacity="0.35" />
-    </svg>
-  );
-}
-function Moon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path
-        d="M20 14.5A8.5 8.5 0 119.5 4 6.8 6.8 0 0020 14.5z"
-        fill="#d9c7a7"
-        opacity="0.65"
-      />
-    </svg>
-  );
-}
+const FEATURES = [
+  { icon: BookOpen, label: "Des histoires originales" },
+  { icon: Sparkles, label: "Une personnalisation magique" },
+  { icon: Leaf, label: "Un cadeau qui a du sens" },
+];
 
 export default async function Home() {
   const pilot = await getPilot();
+  const pilotHref = pilot ? `/histoires/${pilot.slug}` : "/catalogue";
 
   return (
     <main>
-      {/* ————— Hero : le livre ouvert ————— */}
-      <section className="paper-grain relative overflow-hidden bg-blush/50">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full opacity-60 blur-3xl"
-          style={{ background: "radial-gradient(circle, #d7e3cc, transparent 70%)" }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 bottom-10 h-80 w-80 rounded-full opacity-60 blur-3xl"
-          style={{ background: "radial-gradient(circle, #ecd4c6, transparent 70%)" }}
-        />
+      {/* ————— Hero : la page entière EST le livre ouvert ————— */}
+      <section
+        className="relative overflow-hidden bg-cover bg-center"
+        style={{ backgroundImage: "url('/hero-savanna.jpg')" }}
+      >
+        {/* soft veil so the painted page edges stay readable */}
+        <div aria-hidden className="absolute inset-0 bg-paper/10" />
 
-        {/* floating decorations, like toys around the book */}
-        <Drift className="absolute left-[6%] top-[18%] hidden lg:block" duration={8}>
-          <Star className="h-10 w-10" />
-        </Drift>
-        <Drift className="absolute right-[8%] top-[24%] hidden lg:block" duration={11} delay={1.2}>
-          <Leaf className="h-12 w-12" />
-        </Drift>
-        <Drift className="absolute left-[12%] bottom-[30%] hidden lg:block" duration={10} delay={0.6}>
-          <Moon className="h-12 w-12" />
-        </Drift>
-        <Drift className="absolute right-[13%] bottom-[24%] hidden lg:block" duration={9} delay={2}>
-          <Star className="h-7 w-7" color="#b4552d" />
-        </Drift>
+        <div className="relative mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pb-28 lg:pt-14">
+          {/* carousel arrows — decorative, echo the reference mockup */}
+          <button
+            aria-hidden
+            tabIndex={-1}
+            className="pointer-events-none absolute left-[1%] top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-paper-card/90 text-ink shadow-paper md:flex"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            aria-hidden
+            tabIndex={-1}
+            className="pointer-events-none absolute right-[1%] top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-paper-card/90 text-ink shadow-paper md:flex"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
 
-        {/* The hero IS the open book — everything lives inside the pages */}
-        <div className="relative mx-auto max-w-5xl px-4 pb-28 pt-14 sm:px-6 lg:pt-16">
           <Reveal>
-            <Tilt max={3}>
-              <BookSpread seed={(pilot?.id ?? 1) * 7919} caption="Chaque page, peinte à la main, rien que pour votre enfant.">
-                <p className="eyebrow text-center text-terra-deep">{fr.home.eyebrow}</p>
-                <h1 className="mt-4 text-center font-display text-[clamp(1.5rem,3.2vw,2.6rem)] font-semibold leading-[1.1] tracking-tight text-ink">
-                  Un conte africain,
-                  <br />
-                  <em className="font-medium italic text-terra-deep">rien que pour votre enfant.</em>
-                </h1>
-                <p className="mx-auto mt-4 h-px w-12 bg-ochre/70" aria-hidden />
-                <p className="story-text mt-5 flex-1 text-center text-[clamp(0.8rem,1.5vw,1rem)] leading-[1.8] text-ink-soft">
-                  {fr.home.heroSub}
-                </p>
-                <div className="mt-[8%] flex flex-wrap items-center justify-center gap-x-5 gap-y-3 pb-1">
-                  <Link
-                    href={pilot ? `/histoires/${pilot.slug}` : "/catalogue"}
-                    className="sheen press group inline-flex items-center gap-2 rounded-full bg-terra px-5 py-2.5 text-sm font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
-                  >
-                    {fr.home.ctaPrimary}
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
-                  </Link>
-                  <Link
-                    href="/catalogue"
-                    className="link-sweep press inline-flex items-center gap-2 pb-0.5 text-sm font-medium text-ink"
-                  >
-                    {fr.home.ctaSecondary}
-                  </Link>
-                </div>
-              </BookSpread>
-            </Tilt>
+            <BookSpread
+              seed={(pilot?.id ?? 1) * 7919}
+              caption="Des contes, des royaumes, des familles et des voyages d’imagination, pour grandir fier de ses racines."
+            >
+              <p className="eyebrow text-center tracking-[0.24em] text-terra-deep">
+                ✦ Des livres uniques ✦
+              </p>
+              <h1 className="mt-4 text-center font-display text-[clamp(1.55rem,3.4vw,2.7rem)] font-semibold leading-[1.08] tracking-tight text-ink">
+                Votre enfant, héros
+                <br />
+                d’une aventure{" "}
+                <em className="font-medium italic text-terra-deep">africaine.</em>
+              </h1>
+              <p className="mx-auto mt-4 h-px w-14 bg-ochre/70" aria-hidden />
+              <p className="story-text mt-4 text-center text-[clamp(0.72rem,1.4vw,0.95rem)] leading-[1.75] text-ink-soft">
+                Créez un livre illustré et personnalisé, inspiré des contes,
+                de l’histoire et des imaginaires d’Afrique. Une expérience magique
+                qui éveille la fierté, la curiosité et l’amour de nos cultures.
+              </p>
+              <div className="mt-6 grid grid-cols-3 gap-2">
+                {FEATURES.map((f) => (
+                  <div key={f.label} className="flex flex-col items-center gap-1.5 text-center">
+                    <span className="grid h-10 w-10 place-items-center rounded-full bg-ochre/15 text-ochre">
+                      <f.icon className="h-4.5 w-4.5" strokeWidth={1.6} aria-hidden />
+                    </span>
+                    <span className="text-[0.68rem] font-medium leading-tight text-ink-soft">
+                      {f.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-[6%] flex justify-center pb-1">
+                <Link
+                  href={pilotHref}
+                  className="sheen press group inline-flex items-center gap-2.5 rounded-full bg-terra px-6 py-3 text-sm font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
+                >
+                  Créer mon livre maintenant
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+                </Link>
+              </div>
+            </BookSpread>
           </Reveal>
+
+          {/* carousel dots under the book */}
+          <div className="mt-10 flex items-center justify-center gap-2.5" aria-hidden>
+            <span className="h-2 w-2 rounded-full bg-terra" />
+            <span className="h-2 w-2 rounded-full bg-ink/25" />
+            <span className="h-2 w-2 rounded-full bg-ink/25" />
+            <span className="h-2 w-2 rounded-full bg-ink/25" />
+          </div>
         </div>
       </section>
 
