@@ -217,8 +217,64 @@ jobs:
           test -f "${deploy_path}/app.js"
           test -f "${deploy_path}/.next/standalone/server.js"
 
+          # A restart.txt file only recycles an application that Passenger is
+          # already managing. CloudLinux Selector is also able to start an app
+          # that cPanel currently reports as stopped.
+          selector_bin="$(command -v cloudlinux-selector || true)"
+          app_root="${deploy_path#"${HOME}/"}"
+          selector_user="$(id -un)"
+
+          if [[ -n "${selector_bin}" ]]; then
+            if ! "${selector_bin}" restart --json \
+              --interpreter nodejs \
+              --user "${selector_user}" \
+              --app-root "${app_root}"; then
+              "${selector_bin}" start --json \
+                --interpreter nodejs \
+                --user "${selector_user}" \
+                --app-root "${app_root}"
+            fi
+          else
+            echo 'cloudlinux-selector is unavailable; falling back to Passenger restart.txt.' >&2
+          fi
+
+          # Apply this after CloudLinux Selector because starting an app may
+          # regenerate cPanel's Passenger directives. Preserve those directives
+          # and replace only our own idempotent security block.
+          htaccess_path="${deploy_path}/.htaccess"
+          htaccess_body="${deploy_path}/.htaccess.gpt-body"
+          htaccess_next="${deploy_path}/.htaccess.gpt-next"
+          security_begin='# GPT MANAGED SECURITY BEGIN'
+          security_end='# GPT MANAGED SECURITY END'
+
+          if [[ -f "${htaccess_path}" ]]; then
+            awk -v begin="${security_begin}" -v end="${security_end}" '
+              $0 == begin { managed = 1; next }
+              $0 == end { managed = 0; next }
+              !managed { print }
+            ' "${htaccess_path}" > "${htaccess_body}"
+          else
+            : > "${htaccess_body}"
+          fi
+
+          {
+            cat <<'HTACCESS_SECURITY'
+          # GPT MANAGED SECURITY BEGIN
+          Options -Indexes
+          <FilesMatch "(^\.|^app\.js$|^server\.js$|^package(-lock)?\.json$|^next\.config\.|^tsconfig)">
+            Require all denied
+          </FilesMatch>
+          # GPT MANAGED SECURITY END
+          HTACCESS_SECURITY
+            cat "${htaccess_body}"
+          } > "${htaccess_next}"
+
+          mv -f "${htaccess_next}" "${htaccess_path}"
+          rm -f "${htaccess_body}"
+          chmod 644 "${htaccess_path}"
+
           touch "${deploy_path}/tmp/restart.txt"
-          printf 'Deployed commit %s and requested Passenger restart.\n' "${release_sha}"
+          printf 'Deployed commit %s and started/restarted Passenger.\n' "${release_sha}"
           REMOTE_SCRIPT
 
       - name: Verify public health endpoint
