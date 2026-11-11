@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight, BookOpen, Sparkles, Leaf } from "lucide-react";
-import { BookSpread } from "@/components/book-spread";
 import { Reveal } from "@/components/motion";
 import { fr } from "@/lib/i18n/fr";
 import { getDb } from "@/lib/db";
@@ -68,50 +67,114 @@ export default async function Home() {
           </button>
 
           <Reveal>
-            <BookSpread
-              seed={(pilot?.id ?? 1) * 7919}
-              illustrationSrc="/hero-savanna.jpg"
-              illustrationPosition="78% 88%"
-              caption="Des contes, des royaumes, des familles et des voyages d’imagination, pour grandir fier de ses racines."
-            >
-              <p className="eyebrow text-center tracking-[0.24em] text-terra-deep">
-                ✦ Des livres uniques ✦
-              </p>
-              <h1 className="mt-4 text-center font-display text-[clamp(1.55rem,3.4vw,2.7rem)] font-semibold leading-[1.08] tracking-tight text-ink">
-                Votre enfant, héros
-                <br />
-                d’une aventure{" "}
-                <em className="font-medium italic text-terra-deep">africaine.</em>
-              </h1>
-              <p className="mx-auto mt-4 h-px w-14 bg-ochre/70" aria-hidden />
-              <p className="story-text mt-4 text-center text-[clamp(0.72rem,1.4vw,0.95rem)] leading-[1.75] text-ink-soft">
-                Créez un livre illustré et personnalisé, inspiré des contes,
-                de l’histoire et des imaginaires d’Afrique. Une expérience magique
-                qui éveille la fierté, la curiosité et l’amour de nos cultures.
-              </p>
-              <div className="mt-6 grid grid-cols-3 gap-2">
-                {FEATURES.map((f) => (
-                  <div key={f.label} className="flex flex-col items-center gap-1.5 text-center">
-                    <span className="grid h-12 w-12 place-items-center rounded-full bg-ochre/15 text-ochre">
-                      <f.icon className="h-5 w-5" strokeWidth={1.6} aria-hidden />
-                    </span>
-                    <span className="text-[0.72rem] font-medium leading-tight text-ink-soft">
-                      {f.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-[6%] flex justify-center pb-1">
-                <Link
-                  href={pilotHref}
-                  className="sheen press group inline-flex items-center gap-2.5 rounded-full bg-terra px-6 py-3 text-sm font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
+            <div className="relative mx-auto max-w-4xl">
+              {/* The real illustrated open book — content sits on the pages */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/open-book.png"
+                alt="Livre ancien ouvert"
+                className="w-full drop-shadow-[0_18px_30px_rgba(43,33,24,0.28)]"
+              />
+
+              {/* left page — desktop overlay */}
+              <div className="absolute left-[7.5%] top-[9%] hidden h-[76%] w-[40%] flex-col items-center justify-start overflow-hidden text-center sm:flex">
+                <p className="eyebrow tracking-[0.22em] text-terra-deep" style={{ fontSize: "clamp(0.5rem,0.9vw,0.72rem)" }}>
+                  ✦ Des livres uniques ✦
+                </p>
+                <h1
+                  className="mt-[4%] font-display font-semibold leading-[1.08] tracking-tight text-ink"
+                  style={{ fontSize: "clamp(1rem,2.6vw,2.2rem)" }}
                 >
-                  Créer mon livre maintenant
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
-                </Link>
+                  Votre enfant, héros
+                  <br />
+                  d’une aventure{" "}
+                  <em className="font-medium italic text-terra-deep">africaine.</em>
+                </h1>
+                <p className="mt-[3%] h-px w-12 bg-ochre/70" aria-hidden />
+                <p
+                  className="story-text mt-[4%] leading-[1.7] text-ink-soft"
+                  style={{ fontSize: "clamp(0.55rem,1.05vw,0.85rem)" }}
+                >
+                  Créez un livre illustré et personnalisé, inspiré des contes,
+                  de l’histoire et des imaginaires d’Afrique. Une expérience
+                  magique qui éveille la fierté, la curiosité et l’amour de
+                  nos cultures.
+                </p>
+                <div className="mt-[6%] grid grid-cols-3 gap-1.5">
+                  {FEATURES.map((f) => (
+                    <div key={f.label} className="flex flex-col items-center gap-1 text-center">
+                      <span
+                        className="grid place-items-center rounded-full bg-ochre/15 text-ochre"
+                        style={{ width: "clamp(26px,3.2vw,44px)", height: "clamp(26px,3.2vw,44px)" }}
+                      >
+                        <f.icon className="h-[55%] w-[55%]" strokeWidth={1.6} aria-hidden />
+                      </span>
+                      <span className="leading-tight text-ink-soft" style={{ fontSize: "clamp(0.45rem,0.8vw,0.66rem)" }}>
+                        {f.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-[7%]">
+                  <Link
+                    href={pilotHref}
+                    className="sheen press group inline-flex items-center gap-2 rounded-full bg-terra font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
+                    style={{ fontSize: "clamp(0.6rem,1vw,0.85rem)", padding: "0.6em 1.4em" }}
+                  >
+                    Créer mon livre maintenant
+                    <ArrowRight className="h-[1em] w-[1em] transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+                  </Link>
+                </div>
               </div>
-            </BookSpread>
+
+              {/* right page — desktop overlay */}
+              <div className="absolute right-[5.5%] top-[8%] hidden h-[78%] w-[40%] flex-col items-center justify-center sm:flex">
+                <div className="relative w-full flex-1 overflow-hidden rounded-[0.4rem]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/hero-savanna.jpg"
+                    alt=""
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: "76% 84%" }}
+                  />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                    style={{ boxShadow: "inset 0 0 24px rgb(247 241 229 / 0.4), inset 0 0 0 1px rgb(43 33 24 / 0.06)" }}
+                  />
+                </div>
+                <p
+                  className="story-text mt-[4%] text-center italic leading-relaxed text-ink-soft"
+                  style={{ fontSize: "clamp(0.5rem,0.95vw,0.78rem)" }}
+                >
+                  Des contes, des royaumes, des familles et des voyages
+                  d’imagination, pour grandir fier de ses racines.
+                </p>
+              </div>
+            </div>
           </Reveal>
+
+          {/* mobile — content stacked under the book */}
+          <div className="mx-auto -mt-4 max-w-md px-2 text-center sm:hidden">
+            <p className="eyebrow tracking-[0.2em] text-terra-deep">✦ Des livres uniques ✦</p>
+            <h1 className="mt-4 font-display text-3xl font-semibold leading-[1.1] tracking-tight text-ink">
+              Votre enfant, héros d’une aventure{" "}
+              <em className="font-medium italic text-terra-deep">africaine.</em>
+            </h1>
+            <p className="story-text mt-5 leading-[1.8] text-ink-soft">
+              Créez un livre illustré et personnalisé, inspiré des contes,
+              de l’histoire et des imaginaires d’Afrique.
+            </p>
+            <div className="mt-8">
+              <Link
+                href={pilotHref}
+                className="sheen press group inline-flex items-center gap-2.5 rounded-full bg-terra px-7 py-3.5 text-base font-medium text-paper shadow-paper transition-colors duration-300 hover:bg-terra-deep"
+              >
+                Créer mon livre maintenant
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+              </Link>
+            </div>
+          </div>
 
           {/* carousel dots under the book */}
           <div className="mt-10 flex items-center justify-center gap-2.5" aria-hidden>
