@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- cPanel Passenger loads this startup adapter as CommonJS. */
 
 const fs = require("node:fs");
-const os = require("node:os");
 const path = require("node:path");
 
 const envFile = path.join(__dirname, ".env");
@@ -17,7 +16,7 @@ if (fs.existsSync(envFile)) {
 process.env.NODE_ENV = "production";
 process.env.HOSTNAME ||= "0.0.0.0";
 process.env.PERSISTENT_STORAGE_DIR ||= path.join(
-  os.homedir(),
+  path.dirname(__dirname),
   "private",
   "african-storybook-poc",
 );
