@@ -152,17 +152,6 @@ export default async function Home() {
         ) : null}
       </section>
 
-      {/* ————— Manifesto band ————— */}
-      <section className="border-y border-line/70 bg-sage/30">
-        <Reveal className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
-          <p className="eyebrow text-botanical">Notre promesse</p>
-          <blockquote className="story-text mt-6 text-3xl font-medium leading-snug text-ink sm:text-[2.4rem]">
-            « Le parent raconte. L’enfant vit l’histoire. Le livre reste. »
-          </blockquote>
-          <p className="mt-6 text-sm text-ink-soft">{fr.home.culturalNote}</p>
-        </Reveal>
-      </section>
-
       {/* ————— How it works ————— */}
       <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
         <Reveal className="text-center">
@@ -179,34 +168,6 @@ export default async function Home() {
             </Reveal>
           ))}
         </div>
-      </section>
-
-      {/* ————— Final CTA ————— */}
-      <section className="paper-grain relative overflow-hidden bg-blush-deep/60">
-        <Drift className="absolute left-[10%] top-10 hidden lg:block" duration={12}>
-          <Star className="h-8 w-8" color="#b4552d" />
-        </Drift>
-        <Drift className="absolute right-[12%] bottom-12 hidden lg:block" duration={10} delay={1.5}>
-          <Leaf className="h-10 w-10" />
-        </Drift>
-        <Reveal className="relative mx-auto max-w-4xl px-4 py-24 text-center sm:px-6">
-          <p className="eyebrow text-terra-deep">Commencer</p>
-          <h2 className="mt-6 font-display text-4xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
-            Le premier conte ne demande
-            <br />
-            <em className="italic text-terra-deep">que quelques minutes.</em>
-          </h2>
-          <p className="story-text mx-auto mt-7 max-w-xl text-lg text-ink-soft">
-            {fr.tagline}
-          </p>
-          <Link
-            href="/catalogue"
-            className="sheen press group mt-10 inline-flex items-center gap-3 rounded-full bg-ink px-8 py-4 text-base font-medium text-paper shadow-page transition-colors duration-300 hover:bg-terra-deep"
-          >
-            {fr.home.ctaSecondary}
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
-          </Link>
-        </Reveal>
       </section>
     </main>
   );
