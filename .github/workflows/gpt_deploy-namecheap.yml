@@ -223,16 +223,34 @@ jobs:
           selector_bin="$(command -v cloudlinux-selector || true)"
           app_root="${deploy_path#"${HOME}/"}"
           selector_user="$(id -un)"
+          app_domain="${deploy_path##*/}"
 
           if [[ -n "${selector_bin}" ]]; then
             if ! "${selector_bin}" restart --json \
               --interpreter nodejs \
               --user "${selector_user}" \
               --app-root "${app_root}"; then
-              "${selector_bin}" start --json \
+              if ! "${selector_bin}" start --json \
                 --interpreter nodejs \
                 --user "${selector_user}" \
-                --app-root "${app_root}"
+                --app-root "${app_root}"; then
+                "${selector_bin}" destroy --json \
+                  --interpreter nodejs \
+                  --domain "${app_domain}" \
+                  --app-root "${app_root}" || true
+                "${selector_bin}" create --json \
+                  --interpreter nodejs \
+                  --domain "${app_domain}" \
+                  --app-root "${app_root}" \
+                  --app-uri '/' \
+                  --version 22 \
+                  --app-mode production \
+                  --startup-file app.js
+                "${selector_bin}" start --json \
+                  --interpreter nodejs \
+                  --domain "${app_domain}" \
+                  --app-root "${app_root}"
+              fi
             fi
           else
             echo 'cloudlinux-selector is unavailable; falling back to Passenger restart.txt.' >&2
