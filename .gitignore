@@ -24,3 +24,6 @@
 .DS_Store
 Thumbs.db
 *.swp
+
+# Local e2e test artifacts
+/.data-test

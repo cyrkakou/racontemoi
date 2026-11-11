@@ -29,3 +29,20 @@ export function isAuthorizedHealthRequest(request: NextRequest): boolean {
 
   return timingSafeEqual(digest(supplied), digest(expected));
 }
+
+const MINIMUM_ADMIN_TOKEN_LENGTH = 32;
+
+export function isAdminTokenConfigured(): boolean {
+  return (process.env.ADMIN_TOKEN?.length ?? 0) >= MINIMUM_ADMIN_TOKEN_LENGTH;
+}
+
+/** Admin setup endpoint auth: ADMIN_TOKEN bearer or (dev only) same as health token. */
+export function isAdminRequest(request?: NextRequest): boolean {
+  if (!isAdminTokenConfigured()) return false;
+  if (!request) return false;
+  const expected = process.env.ADMIN_TOKEN as string;
+  const auth = request.headers.get("authorization");
+  const bearer = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
+  if (!bearer) return false;
+  return timingSafeEqual(digest(bearer), digest(expected));
+}

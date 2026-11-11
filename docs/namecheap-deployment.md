@@ -148,3 +148,39 @@ Optional variable:
 The SSH key must be dedicated to deployment and authorized for the cPanel account. During Phase 0 only, the workflow falls back to `ssh-keyscan` when `SSH_KNOWN_HOSTS` is absent and emits a warning. Before production, store the independently verified host-key line for the exact SSH hostname in `SSH_KNOWN_HOSTS`; the workflow will then use strict host-key checking without dynamic discovery.
 
 The workflow builds on Ubuntu with Node.js 22 and uploads only `app.js` plus `.next/standalone`. Synchronization with deletion is strictly scoped to `.next/standalone`; cPanel-managed root files, Passenger metadata, `tmp/`, logs, and `.env*` are never deleted. After activation, the workflow uses CloudLinux Selector to restart the application or start it when cPanel reports it as stopped, then also touches `tmp/restart.txt` for Passenger compatibility. It preserves cPanel's Passenger directives in `.htaccess` while maintaining an idempotent security block that disables directory indexing and denies direct HTTP access to runtime/configuration files. The public health check tolerates the temporary LiteSpeed 404 observed while Namecheap recycles the shared-hosting process. Runtime secrets such as MySQL credentials, `HEALTHCHECK_TOKEN`, and `PERSISTENT_STORAGE_DIR` remain server-managed and are never uploaded by the workflow.
+
+## Production application — Racontemoi
+
+The full application adds these environment variables (see `.env.example`):
+
+| Variable | Purpose |
+| --- | --- |
+| `AUTH_SECRET` | Auth.js session encryption — `openssl rand -base64 32` |
+| `ADMIN_TOKEN` | Bearer token for `POST /api/admin/setup` (migrations + editorial seed) — ≥32 chars |
+| `CRON_SECRET` | Bearer-equivalent for `POST /api/cron/run` — sent as `x-cron-secret` header, ≥16 chars |
+| `AI_PROVIDER` | `demo` (default, deterministic, zero cost) or `live` (Phase 4) |
+
+### First-time database setup
+
+Migrations and the editorial seed ship inside the standalone build (no `node_modules` needed on the server). After deploying and restarting:
+
+```bash
+curl -X POST "https://book.atikpa.com/api/admin/setup" \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+```
+
+Expected response: `{"ok":true,"migrations":{"applied":["0001_init"]},"seed":{"seeded":[...]}}`. Safe to re-run — both steps are idempotent.
+
+### Job queue cron (required for generation)
+
+The app has no daemon. cPanel → **Cron Jobs** → add a once-per-minute job:
+
+```bash
+curl -s -X POST "https://book.atikpa.com/api/cron/run" -H "x-cron-secret: $CRON_SECRET" >/dev/null 2>&1
+```
+
+Each invocation claims at most 3 jobs with a ~25 s budget — bounded well under shared-hosting request limits. The job table provides atomic claiming, 120 s leases, exponential backoff, and idempotency keys; expired leases are swept automatically on each run.
+
+### Demo mode
+
+With `AI_PROVIDER` unset or `demo`, narrative and illustration generation are deterministic and free — the complete user journey (personalize → story → approve → illustrate → read → PDF) works without any AI vendor key. `demo` is the default; `live` adapters arrive in Phase 4.
