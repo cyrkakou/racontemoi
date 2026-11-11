@@ -30,6 +30,10 @@ function readPoolOptions(): PoolOptions {
     database: process.env.MYSQL_DATABASE,
     connectionLimit: int(process.env.MYSQL_CONNECTION_LIMIT, 3),
     connectTimeout: int(process.env.MYSQL_CONNECT_TIMEOUT_MS, 5000),
+    // Serialize all JS Date values as UTC. The DB session clock is server-local
+    // (EST on cPanel); without this, app-written datetimes land ~5h in the
+    // future and job-queue comparisons never come due.
+    timezone: "Z",
     enableKeepAlive: true,
     keepAliveInitialDelay: 0,
     ssl: sslEnabled
