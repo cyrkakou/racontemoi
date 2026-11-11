@@ -32,13 +32,21 @@ function toDisplayProbe(result: ProbeResult, subject: string): DisplayProbe {
     };
   }
 
+  const errorDetails: Partial<Record<NonNullable<ProbeResult["code"]>, string>> = {
+    ACCESS_DENIED: "MySQL rejected the configured user, password, or grants.",
+    DATABASE_NOT_FOUND: "The configured MySQL database does not exist.",
+    HOST_UNREACHABLE: "The configured MySQL host or port is unreachable.",
+    CONNECTION_FAILED: `${subject} connection failed for an unspecified reason.`,
+  };
+
   return {
     status: "error",
     label: result.code === "NOT_CONFIGURED" ? "Not configured" : "Unavailable",
     detail:
       result.code === "NOT_CONFIGURED"
         ? `${subject} environment variables are incomplete.`
-        : `${subject} check failed; inspect private server logs.`,
+        : errorDetails[result.code ?? "CONNECTION_FAILED"] ??
+          `${subject} connection failed.`,
   };
 }
 

@@ -7,8 +7,27 @@ export type ProbeResult = {
   status: "ok" | "error";
   checkedAt: string;
   latencyMs: number;
-  code?: "NOT_CONFIGURED" | "CONNECTION_FAILED";
+  code?:
+    | "NOT_CONFIGURED"
+    | "ACCESS_DENIED"
+    | "DATABASE_NOT_FOUND"
+    | "HOST_UNREACHABLE"
+    | "CONNECTION_FAILED";
 };
+
+function getConnectionErrorCode(error: unknown): ProbeResult["code"] {
+  const code =
+    typeof error === "object" && error !== null && "code" in error
+      ? String(error.code)
+      : "";
+
+  if (code === "ER_ACCESS_DENIED_ERROR") return "ACCESS_DENIED";
+  if (code === "ER_BAD_DB_ERROR") return "DATABASE_NOT_FOUND";
+  if (["ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT"].includes(code)) {
+    return "HOST_UNREACHABLE";
+  }
+  return "CONNECTION_FAILED";
+}
 
 declare global {
   var __africanStorybookMysqlPool: Pool | undefined;
@@ -85,7 +104,7 @@ export async function checkDatabase(): Promise<ProbeResult> {
       status: "error",
       checkedAt,
       latencyMs: Math.round(performance.now() - startedAt),
-      code: notConfigured ? "NOT_CONFIGURED" : "CONNECTION_FAILED",
+      code: notConfigured ? "NOT_CONFIGURED" : getConnectionErrorCode(error),
     };
   }
 }
