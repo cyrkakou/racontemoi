@@ -49,7 +49,7 @@ export default async function Home() {
         {/* soft veil so the painted page edges stay readable */}
         <div aria-hidden className="absolute inset-0 bg-paper/10" />
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-[5.5rem] sm:px-6 lg:pb-20 lg:pt-24">
+        <div className="relative mx-auto w-full px-4 pb-16 pt-[5.5rem] sm:px-6 lg:pb-20 lg:pt-24">
           {/* carousel arrows — decorative, echo the reference mockup */}
           <button
             aria-hidden
@@ -67,7 +67,7 @@ export default async function Home() {
           </button>
 
           <Reveal>
-            <div className="relative mx-auto max-w-[72rem]">
+            <div className="relative mx-auto" style={{ width: "min(92vw, 82rem)" }}>
               {/* The real illustrated open book — content sits on the pages */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
