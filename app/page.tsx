@@ -44,13 +44,13 @@ export default async function Home() {
     <main>
       {/* ————— Hero : la page entière EST le livre ouvert ————— */}
       <section
-        className="relative overflow-hidden bg-cover bg-center"
+        className="relative -mt-[4.5rem] overflow-hidden bg-cover bg-center"
         style={{ backgroundImage: "url('/hero-savanna.jpg')" }}
       >
         {/* soft veil so the painted page edges stay readable */}
         <div aria-hidden className="absolute inset-0 bg-paper/10" />
 
-        <div className="relative mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6 lg:pb-28 lg:pt-14">
+        <div className="relative mx-auto max-w-5xl px-4 pb-24 pt-[6.5rem] sm:px-6 lg:pb-28 lg:pt-28">
           {/* carousel arrows — decorative, echo the reference mockup */}
           <button
             aria-hidden

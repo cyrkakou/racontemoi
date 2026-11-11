@@ -1,18 +1,35 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { fr } from "@/lib/i18n/fr";
+import { cn } from "@/lib/utils";
 
 export function SiteNav() {
   const { status } = useSession();
   const authed = status === "authenticated";
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const linkCls =
     "link-sweep rounded-full px-3 py-2 text-[0.95rem] text-ink-soft transition-colors hover:text-ink";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/85 backdrop-blur-md">
+    <header
+      className={cn(
+        "sticky top-0 z-40 transition-all duration-500",
+        scrolled
+          ? "border-b border-line/80 bg-paper/85 backdrop-blur-md"
+          : "border-b border-transparent bg-transparent",
+      )}
+    >
       <div className="mx-auto flex h-[4.5rem] max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="group flex items-baseline gap-3">
           <span className="font-display text-[1.65rem] font-semibold tracking-tight text-ink transition-colors group-hover:text-terra-deep">
