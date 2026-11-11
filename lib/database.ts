@@ -16,15 +16,29 @@ export type ProbeResult = {
 };
 
 function getConnectionErrorCode(error: unknown): ProbeResult["code"] {
-  const code =
-    typeof error === "object" && error !== null && "code" in error
-      ? String(error.code)
-      : "";
+  const pending: unknown[] = [error];
+  const seen = new Set<unknown>();
 
-  if (code === "ER_ACCESS_DENIED_ERROR") return "ACCESS_DENIED";
-  if (code === "ER_BAD_DB_ERROR") return "DATABASE_NOT_FOUND";
-  if (["ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT"].includes(code)) {
-    return "HOST_UNREACHABLE";
+  while (pending.length > 0) {
+    const current = pending.shift();
+    if (typeof current !== "object" || current === null || seen.has(current)) {
+      continue;
+    }
+    seen.add(current);
+
+    const code = "code" in current ? String(current.code) : "";
+    if (["ER_ACCESS_DENIED_ERROR", "ER_DBACCESS_DENIED_ERROR"].includes(code)) {
+      return "ACCESS_DENIED";
+    }
+    if (code === "ER_BAD_DB_ERROR") return "DATABASE_NOT_FOUND";
+    if (["ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT", "EHOSTUNREACH"].includes(code)) {
+      return "HOST_UNREACHABLE";
+    }
+
+    if ("cause" in current) pending.push(current.cause);
+    if ("errors" in current && Array.isArray(current.errors)) {
+      pending.push(...current.errors);
+    }
   }
   return "CONNECTION_FAILED";
 }
